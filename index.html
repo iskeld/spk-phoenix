@@ -1,0 +1,452 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Plug & Phoenix - Elixir web applications</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <style type="text/css">
+            .elixir {
+                color: #3a0654 !important;
+            }
+
+            .meme {
+                height: 450px;
+            }
+
+            #footer {
+                height:60px;
+                position: absolute !important;
+                z-index: 10;
+                position: absolute; left:0px; bottom:50px;
+                width: 100%;
+            }
+
+            .plug_flow {
+                height: 450px;
+                border: none important!;
+                background: none important!;
+            }
+
+            #footer > img {
+                background: none important!;
+                position: absolute; left:0px;
+            }
+
+            #first-section {
+              height: 100% !important;
+              display: flex !important;
+              top: 0px !important;
+              flex-direction: column;
+              justify-content: center;
+            }
+
+            .author {
+              position: absolute !important; right: 0px; bottom: 0px;
+            }
+        </style>
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+                <section id="first-section" data-background="img/elixir_phoenix.png">
+                    <h1>Plug & Phoenix</h1>
+                    <h3>Elixir web applications</h3>
+
+                    <div id="footer">
+                        <img class="plain" src="img/ht.png" />
+                        <small class="author">
+                            <a href="https://twitter.com/eldhash">twitter.com/eldhash</a>
+                        </small>
+                    </div>
+
+                    <aside class="notes" data-markdown>
+                        <textarea data-template>
+                            Prezentacja będzie o tworzeniu webowych aplikacji w Elixirze, z wykorzystaniem biblioteki Plug a także frameworka Phoenix
+                            Nie będę mocno zagłebiał się w żaden z tych tematów, przedstawię je raczej przekrojowo, zaczynając od samego Elixira.
+                            Pokażę jego najfajnieszesze cechy, który sprawiają, że jest moim zdaniem zajebisty :).
+                        </textarea>
+                    </aside>
+                </section>
+
+                <section>
+                    <section>
+                        <h2><span class="elixir">Elixir</span> - language</h2>
+                        <img src="img/elixir.gif" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Elixir jest stosunkowo młodym językiem programowania, stworzył go Jose Valim, który będąc programistą Ruby czerpał z Ruby wiele inspiracji.
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Functional</h3>
+                        <img src="img/functional.png" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Jednak podczas kiedy Ruby jest obiektowe, Elixir jest funkcyjny.
+                                Nie mamy w nim klas
+                                
+                                Oprócz typów bazowych, mamy moduły i funkcje a także listy, krotki, mapy
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <p>Factorial in Elixir</p>
+
+                        <pre><code data-trim>
+                            defmodule Factorial do
+                              def fact(n) do
+                                if n == 0 do
+                                  1
+                                else
+                                  n * fact(n-1)
+                                end
+                              end
+                            end
+                        </code></pre>
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Przykład silni w Elixirze
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Functional properties</h3>
+                        <ul>
+                            <li class="fragment fade-up">Immutability</li>
+                            <li class="fragment fade-up">Everything is an expression</li>
+                            <li class="fragment fade-up">First class functions & higher order functions</li>
+                            <li class="fragment fade-up">Pattern matching</li>
+                        </ul>
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Immutability, czyli niezmienność, keidy już stworzymy jakąś strukturę nie możemy modyfikować jej wartości
+
+                                ```
+                                list = [1, 2, 3]
+                                list ++ [4, 5, 6]
+                                ```
+
+                                _Co prawda w Elixirze jest pewien niezbyt czysty funkcyjnie trick, który chyba ma na celu ułatwienie życia programistom, tzn nadpisywanie zmiennych_
+
+                                Każda instrukcja jest wyrażeniem, a zatem powinna zwracać jakąś wartość:
+
+                                ```
+                                drink = if age >= 18 do
+                                  "gin"
+                                else
+                                  "milk"
+                                end
+                                ```
+
+                                Funkcje są pełnoprawnymi bytami, tzn można je przechowywać w zmiennych, przekazywać je, czy tworzyć anonimowe, tzw lambdy
+
+                                ```
+                                numbers = [5, 18, 10, 50]
+                                square = fn(x) -> x * x end
+                                Enum.map(numbers, square)
+                                ```
+
+                                Pattern matching `=` to tak naprawdę nie operator przypisania a dopasowania
+
+                                ```
+                                a = 5
+                                5 = a
+                                6 = a
+                                [x, y] = [1, 2]
+                                ```
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <p>Pipe operator</p>
+
+                        <pre><code data-trim>
+                            x |> f()  ↔ f(x)
+                            x |> f(y) ↔ f(x, y)
+                        </code></pre>
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Operator pipe
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Fun</h3>
+                        <img src="img/fun.webp" />
+                        
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Jednym ze sloganów ruby jest szczęście programisty, a Elixir bardzo mocno czerpie z tego środowiska. 
+
+                                - tooling (mix)
+                                - iex, help, dokumentacja
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Extensible (macros)</h3>
+                        <img src="img/extensible.webp" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Elixir ma bardzo rozbudowane możliwości metaprogramowanie, czyli tworzenia języka w samym języku, poprzez makra.
+
+                                Wiele elementów samego Elixira nie jest częścią języka a jedynie makrem, najlepszym przykładem jest instrukcja if
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Sample macros</h3>
+
+                        <p>ExUnit - test framework</p>
+                        <pre><code data-trim>
+                          test "greets the world" do
+                            assert Example.hello() == :world
+                          end
+                        </code></pre>
+
+                        <p>Ecto - DB wrapper</p>
+                        <pre><code data-trim>
+                        query = from u in User,
+                          where: u.age > 18 or is_nil(u.email),
+                          select: u
+                        </code></pre>
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                            </textarea>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2><span class="elixir">Elixir</span> - platform</h2>
+                        <img src="img/platform.webp" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                trochę o samej platformie, jej możliwościach
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Erlang VM - BEAM</h3>
+                        <img src="img/erlang.jpg" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Elixir powstał na bazie erlanga i jest z nim kompatybilny binarnie, tzn może korzystać z bibliotek erlangowych i vice versam, a także działa na maszynie wirtualnej erlanga.
+
+                                Relacja między Elixirem a Erlangiem jest jak między Clojure a Javą.
+
+                                Ma to istotną zaletę w postaci dużej ilości dostępnych bibliotek i dojrzałości platformy (Erlang powstał w 1986)
+
+                                Mamy więc stabilny, przetestowany w “bitwie” kod.
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Concurrency</h3>
+                        <img src="img/concurrency.webp" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Elixir świetnie daje radę ze współbieżnością. Po części to zasługa podejścia funkcyjnego a z drugiej maszyna Erlanga oferuje tzw procesy, które w pewnym sensie są bardzo lekkimi odpowiednikami wątków
+
+                                Tych procesów spokojnie mogą być setki tysięcy, każdy z nich ma własny, niezależny stan i komunikacja między nimi odbywa się poprzez wiadomości (Actor Model)
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Scalability</h3>
+                        <img src="img/scalability.jpg" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Dzięki podejściu z procesami możemy być pewni, że zasoby maszyny są dobrze wykorzystane (istotne przy maszynach wielowątkowych)
+
+                                Komunikacja między procesami może odbywać się też pomiędzy instancjami maszyny wirtualnej Erlanga na różnych maszynach, po sparowaniu node’ów jest to praktycznie przeźroczyste.
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Fault tolerance (let it crash)</h3>
+                        <img src="img/fault_tolerance.png" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Jak potkniemy się probując gdzieś wejść to co robimy? Wstajemy i próbujemy jeszcze raz.
+
+                                Tak samo działają procesy - mamy dostępnych nadzorców (Supervisors) którzy w razie potknięcia się procesu podnoszą go na nowo
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Hot code swap</h3>
+                        <img src="img/code_swap.jpg" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Możliwość podmiany działającego kodu
+                            </textarea>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Plug</h2>
+                        <img class="meme" src="img/plug.jpg" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Jest to prosta a zarazem potężna (pod względem możliwości) biblioteka Elixirowa, która jest podstawowym budulcem wielu aplikacji webowych w Elixirze.
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <i>A specification for composable modules between web applications</i>
+                        <br/>
+                        <img class="meme" src="img/composition.jpg" />
+                    </section>
+
+                    <section>
+                        <h2>Plug architecutre</h2>
+                        <img class="plug_flow" src="img/plug_flow.png" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Z pomocą pojedynczych Plugów możemy budować cały flow przetwarzania
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <i>Connection adapters for different web servers in the Erlang VM</i>
+                        <br/>
+                        <small>(Currently Cowboy)</small>
+                        <br/>
+                        <img class="meme" src="img/cowboy.jpg" />
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                Przykład
+
+                                ```
+                                mix new plug_test --sup
+
+                                {:cowboy, "~> 1.1.2"},
+                                {:plug, "~> 1.5"}
+
+                                Plug.Adapters.Cowboy.child_spec(scheme: :http, plug: PlugTest.Router, options: [port: 4001])
+
+                                defmodule PlugTest.Handler do
+                                  use Plug.Builder
+
+                                  plug Plug.Logger
+                                  plug :hello
+
+                                  def hello(conn, _opts) do
+                                    send_resp(conn, 200, "Meow!")
+                                  end
+                                end
+                                ```
+                            </textarea>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Phoenix</h2>
+                        <p>
+                            <ul>
+                                <li>Based on Plug</li>
+                                <li>MVC framework like RoR, ASP.NET MVC</li>
+                            </ul>
+                        </p>
+                        <img class="meme" src="img/phoenix.jpg" />
+                    </section>
+
+                    <section>
+                        <h2>Phoenix - flow</h2>
+                        <p>
+                            <ul>
+                                <li class="fragment fade-up">Endpoint</li>
+                                <li class="fragment fade-up">Router</li>
+                                <li class="fragment fade-up">Controller</li>
+                                <li class="fragment fade-up">View</li>
+                                <li class="fragment fade-up">Template</li>
+                            </ul>
+                        </p>
+
+                        <aside class="notes" data-markdown>
+                            <textarea data-template>
+                                mix phx.new devldz --no-ecto
+                            </textarea>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Phoenix - channels</h2>
+                        <img src="img/channels.jpg" />
+                    </section>
+                </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
