@@ -1,4 +1,4 @@
-# Code samples
+# Code samples from dev@LDZ speech
 
 Immutability
 
